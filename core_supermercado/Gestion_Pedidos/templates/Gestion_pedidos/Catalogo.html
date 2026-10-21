@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-danger-subtle">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Catálogo de Productos</h1>
+        <a href="{% url 'registrar_pedido' %}" class="btn btn-primary">Nuevo Pedido</a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4 p-3">
+        <form method="GET" class="row g-3">
+            <div class="col-md-5">
+                <select name="categoria" class="form-select">
+                    <option value="">Todas las categorías</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <select name="refrigerado" class="form-select">
+                    <option value="">Todos los productos</option>
+                    <option value="1">Solo Refrigerados</option>
+                    <option value="0">No Refrigerados</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Filtrar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-white text-dark bg-primary-subtle">
+                <tr>
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Cadena Frío</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.sku }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.categoria.nombre }}</td>
+                    <td>${{ producto.precio_unitario }}</td>
+                    <td>
+                        {% if producto.stock_disponible > 0 %}
+                            <span class="badge bg-success">{{ producto.stock_disponible }} unid.</span>
+                        {% else %}
+                            <span class="badge bg-danger">Agotado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if producto.requiere_refrigeracion %}
+                            <span class="badge bg-info text-dark">Refrigerado</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Normal</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4 bg-light">No existen productos registrados en la base de datos.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
